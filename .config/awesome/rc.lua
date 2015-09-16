@@ -448,3 +448,4 @@ client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_n
 awful.util.spawn_with_shell("xmodmap ~/.Xmodmap")
 awful.util.spawn_with_shell("setxkbmap -option caps:swapescape")
 awful.util.spawn_with_shell("xset r rate 400 20")
+awful.util.spawn_with_shell("nm-applet")
