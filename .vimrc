@@ -287,17 +287,6 @@ if filereadable($HOME . "/.vimrc.local")
   source ~/.vimrc.local
 endif
 
-" Remove trailing whitespace on save for ruby files.
-function! s:RemoveTrailingWhitespaces()
-  "Save last cursor position
-  let l = line(".")
-  let c = col(".")
-
-  %s/\s\+$//ge
-
-  call cursor(l,c)
-endfunction
-
 au BufWritePre * :call <SID>RemoveTrailingWhitespaces()
 
 " cmd n, cmd p for fwd/backward in search
@@ -309,3 +298,6 @@ nnoremap <C-J> <C-W><C-J>
 nnoremap <C-K> <C-W><C-K>
 nnoremap <C-L> <C-W><C-L>
 nnoremap <C-H> <C-W><C-H>
+
+" set relative numbers to turn on automatically
+set relativenumber
