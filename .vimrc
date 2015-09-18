@@ -299,5 +299,8 @@ nnoremap <C-K> <C-W><C-K>
 nnoremap <C-L> <C-W><C-L>
 nnoremap <C-H> <C-W><C-H>
 
+" Share default mapping for moving within a snippet
+let g:UltiSnipsExpandTrigger= "<c-j>"
+
 " set relative numbers to turn on automatically
 set relativenumber
