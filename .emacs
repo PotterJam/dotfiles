@@ -225,5 +225,3 @@ Return a list of installed packages or nil for every skipped package."
 
 ;;; show matching parenthesis
 (show-paren-mode t)
-
-;;;Add other stuff
