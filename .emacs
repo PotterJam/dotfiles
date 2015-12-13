@@ -1,9 +1,9 @@
 (require 'package)
-
+i
 (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/"))
 (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
 (add-to-list 'package-archives '("melpa-stable" .
-"http://stable.melpa.org/packages/"))
+                                 "http://stable.melpa.org/packages/"))
 
 (setq package-enable-at-startup nil)
 (package-initialize)
@@ -37,7 +37,7 @@ Return a list of installed packages or nil for every skipped package."
 (package-initialize)
 
 ;; Assuming you wish to install "iedit" and "magit"
-(ensure-package-installed 'quickrun 'expand-region 'ace-jump-mode 'magit 'relative-line-numbers 'dtrt-indent 'fill-column-indicator 'evil-leader 'flx-ido 'projectile 'helm-projectile 'yasnippet 'auto-complete 'evil 'helm 'powerline)
+(ensure-package-installed 'quickrun 'evil-nerd-commenter 'expand-region 'ace-jump-mode 'magit 'relative-line-numbers 'dtrt-indent 'fill-column-indicator 'evil-leader 'flx-ido 'projectile 'helm-projectile 'yasnippet 'auto-complete 'evil 'helm 'powerline)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -118,14 +118,14 @@ Return a list of installed packages or nil for every skipped package."
 
 ;; esc quits
 (defun minibuffer-keyboard-quit ()
-    "Abort recursive edit.
+  "Abort recursive edit.
   In Delete Selection mode, if the mark is active, just deactivate it;
   then it takes a second \\[keyboard-quit] to abort the minibuffer."
-    (interactive)
-	  (if (and delete-selection-mode transient-mark-mode mark-active)
-		      (setq deactivate-mark  t)
-			      (when (get-buffer "*Completions*") (delete-windows-on "*Completions*"))
-				      (abort-recursive-edit)))
+  (interactive)
+  (if (and delete-selection-mode transient-mark-mode mark-active)
+      (setq deactivate-mark  t)
+    (when (get-buffer "*Completions*") (delete-windows-on "*Completions*"))
+    (abort-recursive-edit)))
 (define-key evil-normal-state-map [escape] 'keyboard-quit)
 (define-key evil-visual-state-map [escape] 'keyboard-quit)
 (define-key minibuffer-local-map [escape] 'minibuffer-keyboard-quit)
@@ -141,27 +141,27 @@ Return a list of installed packages or nil for every skipped package."
 
 ;;; configure fill column, auto line breaking and column limit marks
 (add-hook 'text-mode-hook (lambda ()
-(turn-on-auto-fill)
-(fci-mode)
-(set-fill-column 82)))
+                            (turn-on-auto-fill)
+                            (fci-mode)
+                            (set-fill-column 82)))
 
 (add-hook 'markdown-mode-hook (lambda ()
-(turn-on-auto-fill)
-(fci-mode)
-(set-fill-column 82)))
+                                (turn-on-auto-fill)
+                                (fci-mode)
+                                (set-fill-column 82)))
 
 ;;; To set the non-auto-line limit for Python a C-mode (and D) to 94:
 (add-hook 'python-mode-hook (lambda ()
-(fci-mode)
-(set-fill-column 94)))
+                              (fci-mode)
+                              (set-fill-column 94)))
 
 (add-hook 'c-mode-hook (lambda ()
-(fci-mode)
-(set-fill-column 94)))
+                         (fci-mode)
+                         (set-fill-column 94)))
 
 (add-hook 'd-mode-hook (lambda ()
-(fci-mode)
-(set-fill-column 94)))
+                         (fci-mode)
+                         (set-fill-column 94)))
 
 
 ;;; set up leader key (,)
@@ -171,47 +171,52 @@ Return a list of installed packages or nil for every skipped package."
 
 ;;; set up leader shortcuts
 (eval-after-load "helm"
-		(evil-leader/set-key
-			"\\" 'shell-command
-            "s" 'ace-jump-char-mode
-            "e" 'ace-jump-word-mode
-            "i" 'ace-jump-line-mode
-			"l" 'helm-for-files
-			"K" 'helm-show-kill-ring
-			"t" 'helm-top
-			"m" 'helm-man-woman
-			"/" 'helm-occur
-			"j" 'helm-M-x
-			"f" 'helm-find-files
-            "o" 'other-window
-			"b" 'helm-buffers-list
-			"h" 'helm-projectile-find-file
-			"r" 'helm-recentf
-			"H" 'helm-projectile))
-	(eval-after-load "helm-ag"
-		(evil-leader/set-key
-			"a" 'helm-projectile-ag))
-	(eval-after-load "expand-region"
-		(progn
-			(setq expand-region-contract-fast-key "z")
-			(evil-leader/set-key "xx" 'er/expand-region)))
-	(eval-after-load "magit"
-		(evil-leader/set-key "g" 'magit-status))
-	(eval-after-load "quickrun"
-		(evil-leader/set-key "q" 'quickrun))
-	(eval-after-load "git-gutter-mode"
-		(evil-leader/set-key
-            "y" 'git-gutter:stage-hunk
-			"n" 'git-gutter:next-hunk
-			"p" 'git-gutter:previous-hunk))
-	(evil-leader/set-key
-		"k" 'kill-buffer
-		"d" 'dired
-		"." 'repeat
-		"0" 'delete-window
-		"u" 'delete-other-windows
-		"2" 'split-window-below
-		"3" 'split-window-right)
+  (evil-leader/set-key
+    "\\" 'shell-command
+    "ci" 'evilnc-comment-or-uncomment-lines
+    "cc" 'evilnc-copy-and-comment-lines
+    "cp" 'evilnc-comment-or-uncomment-paragraphs
+    "cr" 'comment-or-uncomment-region
+    "cv" 'evilnc-toggle-invert-comment-line-by-line
+    "s" 'ace-jump-char-mode
+    "e" 'ace-jump-word-mode
+    "i" 'ace-jump-line-mode
+    "l" 'helm-for-files
+    "K" 'helm-show-kill-ring
+    "t" 'helm-top
+    "m" 'helm-man-woman
+    "/" 'helm-occur
+    "j" 'helm-M-x
+    "f" 'helm-find-files
+    "o" 'other-window
+    "b" 'helm-buffers-list
+    "h" 'helm-projectile-find-file
+    "r" 'helm-recentf
+    "H" 'helm-projectile))
+(eval-after-load "helm-ag"
+  (evil-leader/set-key
+    "a" 'helm-projectile-ag))
+(eval-after-load "expand-region"
+  (progn
+    (setq expand-region-contract-fast-key "z")
+    (evil-leader/set-key "xx" 'er/expand-region)))
+(eval-after-load "magit"
+  (evil-leader/set-key "g" 'magit-status))
+(eval-after-load "quickrun"
+  (evil-leader/set-key "q" 'quickrun))
+(eval-after-load "git-gutter-mode"
+  (evil-leader/set-key
+    "y" 'git-gutter:stage-hunk
+    "n" 'git-gutter:next-hunk
+    "p" 'git-gutter:previous-hunk))
+(evil-leader/set-key
+  "k" 'kill-buffer
+  "d" 'dired
+  "." 'repeat
+  "0" 'delete-window
+  "u" 'delete-other-windows
+  "2" 'split-window-below
+  "3" 'split-window-right)
 
 ;;; show matching paren
 (show-paren-mode t)
