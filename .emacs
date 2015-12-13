@@ -36,7 +36,7 @@ Return a list of installed packages or nil for every skipped package."
 ;; Activate installed packages
 (package-initialize)
 
-;; Assuming you wish to install "iedit" and "magit"
+;; Ensure all packages needed are installed
 (ensure-package-installed 'quickrun 'evil-nerd-commenter 'expand-region 'ace-jump-mode 'magit 'relative-line-numbers 'dtrt-indent 'fill-column-indicator 'evil-leader 'flx-ido 'projectile 'helm-projectile 'yasnippet 'auto-complete 'evil 'helm 'powerline)
 
 (custom-set-variables
