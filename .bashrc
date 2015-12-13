@@ -1,18 +1,12 @@
-<<<<<<< HEAD
-if [ -f /etc/bash_completion ]; then
-	    . /etc/bash_completion
-=======
 if [[ $- != *i* ]] ; then
 	# Shell is non-interactive.  Be done now!
 	return
->>>>>>> e253bc79c60bec83fc2adb585f562530e36b9bd0
 fi
 
 xhost +local:root > /dev/null 2>&1
 
 complete -cf sudo
 
-<<<<<<< HEAD
 shopt -s cdspell
 shopt -s checkwinsize
 shopt -s cmdhist
@@ -46,7 +40,6 @@ alias printer='system-config-printer'
 
 # ex - archive extractor
 # usage: ex <file>
-=======
 # Bash won't get SIGWINCH if another process is in the foreground.
 # Enable checkwinsize so that bash will check the terminal size when
 # it regains control.  #65623
@@ -128,7 +121,6 @@ export YAOURT_COLORS="nb=1:pkg=1:ver=1;32:lver=1;45:installed=1;42:grp=1;34:od=1
 #
 # # ex - archive extractor
 # # usage: ex <file>
->>>>>>> e253bc79c60bec83fc2adb585f562530e36b9bd0
 ex ()
 {
   if [ -f $1 ] ; then
@@ -151,7 +143,6 @@ ex ()
   fi
 }
 
-<<<<<<< HEAD
 # prompt
 PS1='[\u@\h \W]\$ '
 
@@ -166,7 +157,7 @@ alias nb='vim +BlogNew'
 alias gitcommit='git commit -m'
 alias intellij='bash ~/Desktop/idea-IU-141.2734.5/bin/idea.sh'
 alias eb='vim +BlogList'
-=======
+
 colors() {
 	local fgc bgc vals seq0
 
@@ -207,4 +198,3 @@ alias gitcommit='git commit -m'
 alias githelp='echo gitadd, gitcommit, git push origin master'
 alias gitaddstd='git add ~/.bashrc; git add ~/.vimrc; git add ~/.config/awesome/rc.lua'
 alias gitcommitstd='git commit -m "updated config files"'
->>>>>>> e253bc79c60bec83fc2adb585f562530e36b9bd0
