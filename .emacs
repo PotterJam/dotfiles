@@ -175,6 +175,8 @@ Return a list of installed packages or nil for every skipped package."
 ;;; set up leader shortcuts
 (eval-after-load "helm"
 		(evil-leader/set-key
+			"\\" 'shell-command
+			"w" 'write-file
 			"w" 'write-file
 			"s" 'save-buffer
 			"S" 'save-some-buffer
