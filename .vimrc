@@ -5,8 +5,6 @@ execute pathogen#infect()
 set ttyfast
 set lazyredraw
 
-let g:ruby_path="~/.rvm/bin/ruby"
-
 " have jsx highlighting/indenting work in .js files as well
 let g:jsx_ext_required = 0
 
