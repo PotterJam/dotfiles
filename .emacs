@@ -13,7 +13,6 @@
 (tool-bar-mode -1)
 (menu-bar-mode -1)
 
-
 (set-default-font "Terminus")
 
 (defun ensure-package-installed (&rest packages)
@@ -224,5 +223,7 @@ Return a list of installed packages or nil for every skipped package."
   "2" 'split-window-below
   "3" 'split-window-right)
 
-;;; show matching paren
+;;; show matching parenthesis
 (show-paren-mode t)
+
+;;;Add other stuff
