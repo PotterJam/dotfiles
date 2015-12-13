@@ -176,11 +176,7 @@ Return a list of installed packages or nil for every skipped package."
 (eval-after-load "helm"
 		(evil-leader/set-key
 			"\\" 'shell-command
-			"w" 'write-file
-			"w" 'write-file
-			"s" 'save-buffer
-			"S" 'save-some-buffer
-            "c" 'ace-jump-char-mode
+            "s" 'ace-jump-char-mode
             "e" 'ace-jump-word-mode
             "i" 'ace-jump-line-mode
 			"l" 'helm-for-files
