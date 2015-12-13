@@ -26,17 +26,10 @@ map <Leader>gc :Gcommit<CR>
 map <Leader>gp :Gpush<CR>
 "
 " RSpec.vim mappings
-<<<<<<< HEAD
 " map <Leader>t :call RunCurrentSpecFile()<CR>
 " map <Leader>s :call RunNearestSpec()<CR>
 " map <Leader>l :call RunLastSpec()<CR>
 " map <Leader>a :call RunAllSpecs()<CR>
-=======
-map <Leader>t :call RunCurrentSpecFile()<CR>
-map <Leader>s :call RunNearestSpec()<CR>
-map <Leader>l :call RunLastSpec()<CR>
-map <Leader>a :call RunAllSpecs()<CR>
->>>>>>> e253bc79c60bec83fc2adb585f562530e36b9bd0
 
 
 " Toggle nerdtree with F10
@@ -72,11 +65,7 @@ set backspace=2   " Backspace deletes like most programs in insert mode
 set nocompatible  " Use Vim settings, rather then Vi settings
 set nobackup
 set nowritebackup
-<<<<<<< HEAD
 set noswapfile    "
-=======
-set noswapfile    " http://robots.thoughtbot.com/post/18739402579/global-gitignore#comment-458413287
->>>>>>> e253bc79c60bec83fc2adb585f562530e36b9bd0
 set history=500
 set ruler         " show the cursor position all the time
 set showcmd       " display incomplete commands
@@ -99,10 +88,7 @@ if filereadable(expand("~/.vimrc.bundles"))
 endif
 
 filetype plugin indent on
-<<<<<<< HEAD
 filetype plugin on
-=======
->>>>>>> e253bc79c60bec83fc2adb585f562530e36b9bd0
 
 augroup vimrcEx
   autocmd!
@@ -110,17 +96,6 @@ augroup vimrcEx
   " For all text files set 'textwidth' to 78 characters.
   autocmd FileType text setlocal textwidth=78
 
-<<<<<<< HEAD
-=======
-  " When editing a file, always jump to the last known cursor position.
-  " Don't do it for commit messages, when the position is invalid, or when
-  " inside an event handler (happens when dropping a file on gvim).
-  autocmd BufReadPost *
-    \ if &ft != 'gitcommit' && line("'\"") > 0 && line("'\"") <= line("$") |
-    \   exe "normal g`\"" |
-    \ endif
-
->>>>>>> e253bc79c60bec83fc2adb585f562530e36b9bd0
   " Set syntax highlighting for specific file types
   autocmd BufRead,BufNewFile Appraisals set filetype=ruby
   autocmd BufRead,BufNewFile *.md set filetype=markdown
@@ -142,10 +117,6 @@ set softtabstop=4
 set noexpandtab
 
 let g:rspec_command = 'call Send_to_Tmux("bin/rspec {spec}\n")'
-<<<<<<< HEAD
-=======
-let g:mocha_js_command = 'call Send_to_Tmux("mocha --opts spec/javascripts/mocha.opts {spec}\n")'
->>>>>>> e253bc79c60bec83fc2adb585f562530e36b9bd0
 let g:rspec_runner = "os_x_iterm"
 
 " Display extra whitespace
@@ -157,12 +128,8 @@ if executable('ag')
   set grepprg=ag\ --nogroup
   let g:grep_cmd_opts = '--line-numbers --noheading'
 
-<<<<<<< HEAD
   " Use ag in CtrlP for listing files. Lightning fast and respects
 .gitignore
-=======
-  " Use ag in CtrlP for listing files. Lightning fast and respects .gitignore
->>>>>>> e253bc79c60bec83fc2adb585f562530e36b9bd0
   let g:ctrlp_user_command = 'ag %s -l -g ""'
 
   " ag is fast enough that CtrlP doesn't need to cache
@@ -183,11 +150,7 @@ set t_Co=256
 :set noantialias
 
 " Color scheme
-<<<<<<< HEAD
 colorscheme jellybeans
-=======
-colorscheme solarized
->>>>>>> e253bc79c60bec83fc2adb585f562530e36b9bd0
 set background=dark
 set encoding=utf-8
 
@@ -216,24 +179,6 @@ set undoreload=10000
 " convert hash rockets
 nmap <leader>rh :%s/\v:(\w+) \=\>/\1:/g<cr>
 
-<<<<<<< HEAD
-=======
-" Tab completion
-" will insert tab at beginning of line,
-" will use completion if not at beginning
-set wildmode=list:longest,list:full
-set complete=.,w,t
-function! InsertTabWrapper()
-    let col = col('.') - 1
-    if !col || getline('.')[col - 1] !~ '\k'
-        return "\<tab>"
-    else
-        return "\<c-p>"
-    endif
-endfunction
-inoremap <Tab> <c-r>=InsertTabWrapper()<cr>
-
->>>>>>> e253bc79c60bec83fc2adb585f562530e36b9bd0
 " Exclude Javascript files in :Rtags via rails.vim due to warnings when parsing
 let g:Tlist_Ctags_Cmd="ctags --exclude='*.js'"
 
@@ -337,9 +282,6 @@ let g:UltiSnipsExpandTrigger= "<c-j>"
 
 " set relative numbers to turn on automatically
 set relativenumber
-<<<<<<< HEAD
 
 " Publish blog post ey
 nnoremap b :BlogSave publish
-=======
->>>>>>> e253bc79c60bec83fc2adb585f562530e36b9bd0
