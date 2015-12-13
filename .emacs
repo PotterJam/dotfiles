@@ -104,9 +104,6 @@ Return a list of installed packages or nil for every skipped package."
 ;;; enable projectile globally
 (projectile-global-mode)
 
-;;; auto indent with return key
-(define-key global-map (kbd "RET") 'newline-and-indent)
-
 ;;; org mode...
 (require 'org)
 (define-key global-map "\C-cl" 'org-store-link)
