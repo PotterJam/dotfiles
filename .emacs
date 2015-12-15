@@ -36,7 +36,7 @@ Return a list of installed packages or nil for every skipped package."
 (package-initialize)
 
 ;; Ensure all packages needed are installed
-(ensure-package-installed 'quickrun 'evil-nerd-commenter 'expand-region 'ace-jump-mode 'magit 'relative-line-numbers 'dtrt-indent 'fill-column-indicator 'evil-leader 'flx-ido 'projectile 'helm-projectile 'yasnippet 'auto-complete 'evil 'helm 'powerline)
+(ensure-package-installed 'evil-surround 'quickrun 'evil-nerd-commenter 'expand-region 'ace-jump-mode 'magit 'relative-line-numbers 'dtrt-indent 'fill-column-indicator 'evil-leader 'flx-ido 'projectile 'helm-projectile 'yasnippet 'auto-complete 'evil 'helm 'powerline)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -229,3 +229,6 @@ Return a list of installed packages or nil for every skipped package."
 ;;; set helm fuzzy  matching
 (setq helm-buffers-fuzzy-matching t
       helm-recentf-fuzzy-match    t)
+
+;;; set evil surround global
+(global-evil-surround-mode 1)
