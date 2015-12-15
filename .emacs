@@ -225,3 +225,7 @@ Return a list of installed packages or nil for every skipped package."
 
 ;;; show matching parenthesis
 (show-paren-mode t)
+
+;;; set helm fuzzy  matching
+(setq helm-buffers-fuzzy-matching t
+      helm-recentf-fuzzy-match    t)
