@@ -1,0 +1,3 @@
+stack build --copy-compiler-tool
+stack exec -- which ghcid
+stack exec -- ghcid -c 'stack ghci'
