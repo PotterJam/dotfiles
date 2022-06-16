@@ -1,0 +1,26 @@
+[alias]
+    plog = log --graph --decorate --pretty=oneline --abbrev-commit
+    diff = diff --word-diff
+    ibdiff = diff --ignore-space-at-eol -b -w --ignore-blank-lines
+    dc = diff --cached
+    cp = cherry-pick
+    st = status -s
+    cl = clone
+    com = commit
+    co = checkout
+    caa = commit -a --amend -C HEAD
+    la = "!git config -l | grep alias | cut -c 7-"
+    r = reset
+    r1 = reset HEAD^
+    r2 = reset HEAD^^
+    rh = reset --hard
+    rh1 = reset HEAD^ --hard
+    rh2 = reset HEAD^^ --hard
+    sl = stash list
+    sp = stash pop
+    ss = stash save
+    newb = "!git stash; git checkout develop; git pull; git clean -fd; git checkout -b"
+    bd = branch -d
+    bdremote = push -d origin
+    nbp = push -u origin
+    
