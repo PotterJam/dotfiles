@@ -20,8 +20,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-#define PERMISSIVE_HOLD
-#define IGNORE_MOD_TAP_INTERRUPT
+// High tapping term as we're using permissive hold for
+// things where it matters
+#define TAPPING_TERM 250
+
+#define PERMISSIVE_HOLD_PER_KEY
 
 #ifdef RGBLIGHT_ENABLE
     #define RGBLIGHT_EFFECT_BREATHING
