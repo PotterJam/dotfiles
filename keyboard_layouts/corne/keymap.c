@@ -43,15 +43,33 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                 KC_NO, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_NO)
 };
 
+enum custom_keycodes {
+    THICK_ARROW_RIGHT = SAFE_RANGE,
+};
+
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+    case THICK_ARROW_RIGHT:
+        if (record->event.pressed) {
+            SEND_STRING("=> ");
+        }
+        break;
+    }
+    return true;
+};
+
+const uint16_t PROGMEM arrow_combo[] = {KC_PEQL, KC_HASH, COMBO_END};
+combo_t key_combos[] = {
+    COMBO(arrow_combo, THICK_ARROW_RIGHT),
+};
+
 bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         case LA_NAV:
         case LA_SYM:
         case LA_NUM:
-            // Immediately select the hold action when another key is pressed.
             return true;
         default:
-            // Do not select the hold action when another key is pressed.
             return false;
     }
 }
