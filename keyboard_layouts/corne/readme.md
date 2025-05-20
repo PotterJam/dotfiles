@@ -1,1 +1,0 @@
-Uses tri layer https://docs.qmk.fm/features/tri_layer feature so rename mo(1) and mo(2) to TL_LOWR and TL_UPPR
