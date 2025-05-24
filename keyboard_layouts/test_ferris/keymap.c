@@ -7,3 +7,34 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [3] = LAYOUT_split_3x5_2(KC_TRNS, KC_7, KC_8, KC_9, KC_TRNS, KC_F6, KC_F9, KC_F10, KC_F11, KC_F12, KC_DOT, KC_4, KC_5, KC_6, KC_TRNS, KC_F7, OSM(MOD_LCTL), OSM(MOD_LALT), OSM(MOD_LGUI), OSM(MOD_LSFT), KC_TRNS, KC_1, KC_2, KC_3, KC_TRNS, KC_F8, KC_F2, KC_F3, KC_F4, KC_F5, KC_TRNS, KC_0, KC_TRNS, KC_TRNS),
     [4] = LAYOUT_split_3x5_2(KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_CIRC, KC_HASH, KC_DLR, KC_AT, OSM(MOD_LSFT), OSM(MOD_LGUI), OSM(MOD_LALT), OSM(MOD_LCTL), KC_TRNS, KC_GRV, KC_LPRN, KC_DQUO, KC_RPRN, KC_SCLN, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_BSLS, KC_LBRC, KC_AMPR, KC_RBRC, KC_QUES, KC_TRNS, KC_TRNS, KC_UNDS, KC_TRNS)
 };
+
+bool is_flow_tap_key(uint16_t keycode) {
+    if ((get_mods() & (MOD_MASK_CG | MOD_BIT_LALT)) != 0) {
+        return false; // Disable Flow Tap on hotkeys.
+    }
+    switch (get_tap_keycode(keycode)) {
+        case KC_SPC:
+        case KC_A ... KC_Z:
+        case KC_DOT:
+        case KC_COMM:
+        case KC_SCLN:
+        case KC_SLSH:
+        case KC_UNDS:
+            return true;
+    }
+    return false;
+}
+
+bool get_permissive_hold(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+        case LT(4,KC_BSPC):
+        case LT(1,KC_TAB):
+        case LT(3,KC_SPC):
+        case LT(2,KC_ENT):
+            // Immediately select the hold action when another key is tapped.
+            return true;
+        default:
+            // Do not select the hold action when another key is tapped.
+            return false;
+    }
+}
