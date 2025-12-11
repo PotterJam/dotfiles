@@ -8,6 +8,12 @@ enum layers {
     NAV,
 };
 
+enum custom_keycodes {
+    CU_LT = SAFE_RANGE,
+    CU_GT,
+    CU_PIPE,
+};
+
 #define LA_SYM OSL(SYM)
 #define LA_NUM OSL(NUM)
 #define LA_FUN OSL(FUN)
@@ -33,7 +39,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [SYM] = LAYOUT_split_3x6_3(
         KC_PERC, KC_ASTR, KC_DQUO, KC_LCBR, KC_LPRN, KC_LBRC,    KC_RBRC, KC_RPRN, KC_RCBR, KC_AT,   KC_TRNS, KC_NO,
         KC_HASH, KC_QUES, KC_MINS, KC_EQL,  KC_COLN, KC_AMPR,    KC_NO,   KC_LCTL, KC_LALT, KC_LGUI, KC_LSFT, KC_TRNS,
-        KC_TILD, KC_LT,   KC_BSLS, KC_PLUS, KC_GT,   KC_SLSH,    KC_NO,   KC_GRV,  KC_TRNS, KC_TRNS, KC_TRNS, KC_NO,
+        KC_TILD, CU_LT,   CU_PIPE, KC_PLUS, CU_GT,   KC_SLSH,    KC_NO,   KC_GRV,  KC_TRNS, KC_TRNS, KC_TRNS, KC_NO,
                           KC_TRNS, KC_TRNS, KC_EXLM,             KC_NO,   KC_NO,   KC_NO
     ),
 
@@ -107,47 +113,27 @@ uint16_t get_flow_tap_term(uint16_t keycode, keyrecord_t* record,
     return 0;
 }
 
-enum combo_events {
-    XQ_CW,
-    BK_THIN_ARROW,
-    FW_ARROW,
-    FW_THIN_ARROW,
-    GT_EQ,
-    LT_EQ,
-};
 
-const uint16_t PROGMEM xq_combo[] = {KC_X, KC_Q, COMBO_END};
-const uint16_t PROGMEM bw_thin_arrow_combo[] = {KC_QUES, KC_MINS, COMBO_END};
-const uint16_t PROGMEM fw_arrow_combo[] = {KC_EQL, KC_AMPR, COMBO_END};
-const uint16_t PROGMEM fw_thin_arrow_combo[] = {KC_LT, KC_BSLS, COMBO_END};
-const uint16_t PROGMEM gt_eq_combo[] = {KC_BSLS, KC_PLUS, COMBO_END};
-const uint16_t PROGMEM lt_eq_combo[] = {KC_DQUO, KC_LCBR, COMBO_END};
-
-combo_t key_combos[] = {
-    [XQ_CW] = COMBO(xq_combo, CW_TOGG),
-    [BK_THIN_ARROW] = COMBO_ACTION(bw_thin_arrow_combo),
-    [FW_ARROW] = COMBO_ACTION(fw_arrow_combo),
-    [FW_THIN_ARROW] = COMBO_ACTION(fw_thin_arrow_combo),
-    [GT_EQ] = COMBO_ACTION(gt_eq_combo),
-    [LT_EQ] = COMBO_ACTION(lt_eq_combo),
-};
-
-void process_combo_event(uint16_t combo_index, bool pressed) {
-    switch(combo_index) {
-        case BK_THIN_ARROW:
-            if (pressed) { SEND_STRING("<-"); }
-            break;
-        case FW_ARROW:
-            if (pressed) { SEND_STRING("=>"); }
-            break;
-        case FW_THIN_ARROW:
-            if (pressed) { SEND_STRING("->"); }
-            break;
-        case GT_EQ:
-            if (pressed) { SEND_STRING(">="); }
-            break;
-        case LT_EQ:
-            if (pressed) { SEND_STRING("<="); }
-            break;
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+        case CU_LT:
+            if (record->event.pressed) {
+                tap_code16(KC_LT);
+                clear_weak_mods();
+            }
+            return false;
+        case CU_GT:
+            if (record->event.pressed) {
+                tap_code16(KC_GT);
+                clear_weak_mods();
+            }
+            return false;
+        case CU_PIPE:
+            if (record->event.pressed) {
+                tap_code16(KC_PIPE);
+                clear_weak_mods();
+            }
+            return false;
     }
+    return true;
 }
