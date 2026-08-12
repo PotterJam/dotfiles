@@ -38,7 +38,7 @@ xcode-select --install
 eval "$(/opt/homebrew/bin/brew shellenv)"
 ```
 
-Homebrew was installed at `/opt/homebrew`. The current top-level formulae are Fish, Herdr, LazyGit, Node, Podman, and Socat. `fzf` is included below because the Herdr cross-tab pane command requires it, even though it was missing when this inventory was made.
+Homebrew was installed at `/opt/homebrew`. The current top-level formulae are Fish, Herdr, Hunk, LazyGit, Node, Podman, and Socat. `fzf` is included below because the Herdr cross-tab pane command requires it, even though it was missing when this inventory was made.
 
 Create a temporary `Brewfile` containing:
 
@@ -46,6 +46,7 @@ Create a temporary `Brewfile` containing:
 brew "fish"
 brew "fzf"
 brew "herdr"
+brew "modem-dev/tap/hunk"
 brew "lazygit"
 brew "node"
 brew "podman"
@@ -108,35 +109,21 @@ Configure Git identity, signing, credentials, and SSH separately from a secure s
 - Spotify
 - Visual Studio Code
 
-### Installed manually or by company management
+### Installed manually
 
 - 1Password
-- CrowdStrike Falcon — company-managed
-- Gearset IT Self Service — company-managed
 - Ghostty
 - Google Chrome
 - Notion
 - Notion Calendar
 - Rectangle
 - Slack
-- Zoom
 
 For a personal/unmanaged rebuild, most of the manually installed apps can optionally be installed through Homebrew:
 
 ```sh
 brew install --cask 1password ghostty google-chrome notion notion-calendar rectangle slack zoom
 ```
-
-### Mac App Store / Apple apps
-
-- GarageBand
-- iMovie
-- Keynote Creator Studio
-- Numbers Creator Studio
-- Pages Creator Studio
-- Safari (bundled with macOS)
-
-The Apple productivity/media apps are optional unless actively needed. Reinstall them from the Mac App Store.
 
 ## Browser
 
@@ -148,7 +135,7 @@ Restore browser profile, bookmarks, and extensions through the intended account 
 
 ## Ghostty
 
-Ghostty 1.3.1 was installed manually. Its active macOS configuration is stored at:
+Ghostty 1.3.1 was installed manually but for fresh installs use brew. Its active macOS configuration is stored at:
 
 `~/Library/Application Support/com.mitchellh.ghostty/config.ghostty`
 
@@ -244,6 +231,51 @@ width = "95%"
 height = "95%"
 
 [[keys.command]]
+key = "prefix+d"
+type = "popup"
+command = """
+set -u
+
+cwd=${HERDR_ACTIVE_PANE_CWD:-$PWD}
+if repo=$(git -C "$cwd" rev-parse --show-toplevel 2>/dev/null); then
+  :
+else
+  repos=$(mktemp)
+  trap 'rm -f "$repos"' EXIT HUP INT TERM
+  find "$HOME/git" -mindepth 2 -maxdepth 2 -type d -name .git -print 2>/dev/null |
+    sed 's#/.git$##' |
+    sort > "$repos"
+
+  if [ ! -s "$repos" ]; then
+    printf 'Hunk needs a Git repository, and none were found under ~/git.\n\nPress Enter to close.'
+    IFS= read -r _
+    exit 1
+  fi
+
+  printf 'Choose a repository for Hunk:\n\n'
+  awk '{ printf "  %d) %s\\n", NR, $0 }' "$repos"
+  printf '\nRepository number (blank cancels): '
+  IFS= read -r choice
+  [ -n "$choice" ] || exit 0
+  case $choice in *[!0-9]*) exit 0 ;; esac
+  repo=$(sed -n "${choice}p" "$repos")
+  [ -n "$repo" ] || exit 0
+fi
+
+cd "$repo" || exit 1
+/opt/homebrew/bin/hunk diff --watch
+status=$?
+if [ "$status" -ne 0 ]; then
+  printf '\nHunk exited with status %s. Press Enter to close.' "$status"
+  IFS= read -r _
+fi
+exit "$status"
+"""
+description = "review changes in Hunk"
+width = "95%"
+height = "95%"
+
+[[keys.command]]
 key = "prefix+m"
 type = "shell"
 command = "\"$HERDR_BIN_PATH\" pane zoom \"$HERDR_ACTIVE_PANE_ID\" --off >/dev/null 2>&1; \"$HERDR_BIN_PATH\" pane move \"$HERDR_ACTIVE_PANE_ID\" --new-tab --focus"
@@ -317,6 +349,7 @@ Important shortcuts:
 |---|---|
 | Herdr prefix | Control+H |
 | Open LazyGit popup | Prefix, then L |
+| Review changes in Hunk | Prefix, then D |
 | New tab | Prefix, then T |
 | Previous / next tab | Prefix+P / Prefix+N |
 | Switch tab | Control+1…9 |
@@ -451,12 +484,13 @@ These versions are an audit trail, not pins:
 ## Final verification checklist
 
 - `brew doctor` is acceptably clean
-- `fish` is the login shell and `brew`, `herdr`, `lazygit`, `fzf`, `node`, `code`, `claude`, and `codex` resolve in a fresh terminal
+- `fish` is the login shell and `brew`, `herdr`, `hunk`, `lazygit`, `fzf`, `node`, `code`, `claude`, and `codex` resolve in a fresh terminal
 - Chrome is the default browser
 - Raycast opens with Command+Space
 - Ghostty passes Command+1…9 through to Herdr
 - `herdr config check` passes and Herdr starts at login
 - Prefix+L opens LazyGit
+- Prefix+D opens Hunk and watches the current repository diff
 - Herdr pane-to-tab commands work
 - VS Code has the three .NET extensions
 - Rectangle and Scroll Reverser have their required Accessibility/Input Monitoring permissions
