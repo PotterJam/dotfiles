@@ -1,6 +1,6 @@
 # Mac setup and rebuild guide
 
-Last inventoried: 11 August 2026
+Last inventoried: 12 August 2026
 
 This is a portable record of the useful software and preferences on this Mac. It intentionally excludes passwords, tokens, SSH keys, application databases, logs, window positions, and other transient state.
 
@@ -19,12 +19,12 @@ Do not try to reproduce the exact OS or app versions below unless debugging a re
 
 ## Recommended setup order
 
-1. Complete macOS updates and, for a work machine, company enrollment.
+1. Complete macOS updates.
 2. Sign in to 1Password before restoring credentials or developer keys.
 3. Install the Xcode command-line tools and Homebrew.
 4. Install the Brewfile packages below.
 5. Set Fish as the login shell.
-6. Install the remaining manual, App Store, and company-managed apps.
+6. Install the remaining manually managed apps.
 7. Restore Ghostty and Herdr configuration from this document.
 8. Restore VS Code extensions and utility preferences.
 9. Sign in to apps and restore SSH/Git credentials from the appropriate secure source.
@@ -118,8 +118,9 @@ Configure Git identity, signing, credentials, and SSH separately from a secure s
 - Notion Calendar
 - Rectangle
 - Slack
+- Zoom
 
-For a personal/unmanaged rebuild, most of the manually installed apps can optionally be installed through Homebrew:
+Most of the manually installed apps can optionally be installed through Homebrew:
 
 ```sh
 brew install --cask 1password ghostty google-chrome notion notion-calendar rectangle slack zoom
@@ -135,7 +136,7 @@ Restore browser profile, bookmarks, and extensions through the intended account 
 
 ## Ghostty
 
-Ghostty 1.3.1 was installed manually but for fresh installs use brew. Its active macOS configuration is stored at:
+Ghostty 1.3.1 was installed manually. Its active macOS configuration is stored at:
 
 `~/Library/Application Support/com.mitchellh.ghostty/config.ghostty`
 
@@ -231,49 +232,10 @@ width = "95%"
 height = "95%"
 
 [[keys.command]]
-key = "prefix+d"
-type = "popup"
-command = """
-set -u
-
-cwd=${HERDR_ACTIVE_PANE_CWD:-$PWD}
-if repo=$(git -C "$cwd" rev-parse --show-toplevel 2>/dev/null); then
-  :
-else
-  repos=$(mktemp)
-  trap 'rm -f "$repos"' EXIT HUP INT TERM
-  find "$HOME/git" -mindepth 2 -maxdepth 2 -type d -name .git -print 2>/dev/null |
-    sed 's#/.git$##' |
-    sort > "$repos"
-
-  if [ ! -s "$repos" ]; then
-    printf 'Hunk needs a Git repository, and none were found under ~/git.\n\nPress Enter to close.'
-    IFS= read -r _
-    exit 1
-  fi
-
-  printf 'Choose a repository for Hunk:\n\n'
-  awk '{ printf "  %d) %s\\n", NR, $0 }' "$repos"
-  printf '\nRepository number (blank cancels): '
-  IFS= read -r choice
-  [ -n "$choice" ] || exit 0
-  case $choice in *[!0-9]*) exit 0 ;; esac
-  repo=$(sed -n "${choice}p" "$repos")
-  [ -n "$repo" ] || exit 0
-fi
-
-cd "$repo" || exit 1
-/opt/homebrew/bin/hunk diff --watch
-status=$?
-if [ "$status" -ne 0 ]; then
-  printf '\nHunk exited with status %s. Press Enter to close.' "$status"
-  IFS= read -r _
-fi
-exit "$status"
-"""
-description = "review changes in Hunk"
-width = "95%"
-height = "95%"
+key = "prefix+c"
+type = "shell"
+command = "$HOME/.config/herdr/send-hunk-comments.sh"
+description = "send Hunk comments to an agent"
 
 [[keys.command]]
 key = "prefix+m"
@@ -349,7 +311,7 @@ Important shortcuts:
 |---|---|
 | Herdr prefix | Control+H |
 | Open LazyGit popup | Prefix, then L |
-| Review changes in Hunk | Prefix, then D |
+| Send Hunk comments to an agent | Prefix, then C |
 | New tab | Prefix, then T |
 | Previous / next tab | Prefix+P / Prefix+N |
 | Switch tab | Control+1…9 |
@@ -358,6 +320,160 @@ Important shortcuts:
 | Move pane to new tab | Prefix, then M |
 | Move pane to another tab | Prefix, then Shift+M |
 | Rename focused agent | Prefix, then Shift+A |
+
+### Send Hunk comments to an agent
+
+The `Prefix`, then `C` command prompts an agent in the active workspace with
+`Use the hunk-review skill. Address my comments please`. A sole agent is
+prompted immediately; multiple agents open an `fzf` picker.
+
+Install the dispatcher at `~/.config/herdr/send-hunk-comments.sh`:
+
+```sh
+#!/bin/sh
+set -eu
+
+herdr=${HERDR_BIN_PATH:-herdr}
+message="Use the hunk-review skill. Address my comments please"
+workspace=${HERDR_ACTIVE_WORKSPACE_ID:?HERDR_ACTIVE_WORKSPACE_ID is required}
+agent_list=$("$herdr" agent list)
+agent_count=$(printf '%s\n' "$agent_list" | jq -r --arg workspace "$workspace" \
+  '[.result.agents[] | select(.workspace_id == $workspace)] | length')
+
+case "$agent_count" in
+  0) exit 1 ;;
+  1)
+    target=$(printf '%s\n' "$agent_list" | jq -r --arg workspace "$workspace" \
+      '.result.agents[] | select(.workspace_id == $workspace) | .pane_id')
+    exec "$herdr" agent prompt "$target" "$message"
+    ;;
+  *)
+    exec "$herdr" plugin pane open --plugin local.hunk-agent-picker \
+      --entrypoint picker --env "HUNK_PICKER_WORKSPACE=$workspace" --focus
+    ;;
+esac
+```
+
+Create `~/.config/herdr/plugins/hunk-agent-picker/herdr-plugin.toml`:
+
+```toml
+id = "local.hunk-agent-picker"
+name = "Hunk Agent Picker"
+version = "0.1.0"
+min_herdr_version = "0.8.0"
+description = "Choose which agent should address comments in a live Hunk review"
+platforms = ["macos", "linux"]
+
+[[panes]]
+id = "picker"
+title = "Send Hunk comments"
+placement = "popup"
+width = "90%"
+height = "90%"
+command = ["/bin/sh", "-lc", "exec \"$HERDR_PLUGIN_ROOT/picker.sh\""]
+```
+
+Create `picker.sh` beside that manifest:
+
+```sh
+#!/bin/sh
+set -eu
+
+herdr=${HERDR_BIN_PATH:-herdr}
+workspace=${HUNK_PICKER_WORKSPACE:-${HERDR_WORKSPACE_ID:-}}
+if [ -z "$workspace" ]; then
+  workspace=$("$herdr" api snapshot | jq -r '.result.snapshot.focused_workspace_id // empty')
+fi
+[ -n "$workspace" ] || exit 1
+
+target=$("$herdr" agent list | jq -r --arg workspace "$workspace" '
+  .result.agents[]
+  | select(.workspace_id == $workspace)
+  | [.pane_id, .agent, .agent_status, .terminal_title_stripped, .foreground_cwd]
+  | @tsv
+' | fzf --prompt='send Hunk comments to> ' \
+  --header='agent   status   title   directory' --delimiter='\t' --with-nth=2.. |
+  cut -f1)
+
+[ -n "$target" ] || exit 0
+exec "$herdr" agent prompt "$target" \
+  "Use the hunk-review skill. Address my comments please"
+```
+
+Register and validate it:
+
+```sh
+chmod +x ~/.config/herdr/send-hunk-comments.sh \
+  ~/.config/herdr/plugins/hunk-agent-picker/picker.sh
+herdr plugin link ~/.config/herdr/plugins/hunk-agent-picker --enabled
+herdr config check
+herdr server reload-config
+```
+
+### Hunk bridge for containerized agents
+
+Hunk's TUI runs on the host and exposes its live review session on
+`127.0.0.1:47657`. Containerized agents reach it through
+`host.docker.internal`. Install this as `~/.claude/container-init.sh` and copy
+it to `~/.claude/.container-init.sh`, the filename consumed by the current
+`claudecc` entrypoint:
+
+```sh
+#!/usr/bin/env bash
+set -euo pipefail
+
+if ! command -v hunk &>/dev/null; then
+    npm install -g --prefix "$HOME/.local" hunkdiff >/dev/null 2>&1
+fi
+
+HUNK_GW_IP="$(getent hosts host.docker.internal 2>/dev/null | awk 'NR == 1 { print $1 }' || true)"
+if [ -n "$HUNK_GW_IP" ]; then
+    if ! sudo iptables -C OUTPUT -p tcp --dport 47657 -d "$HUNK_GW_IP" -j ACCEPT 2>/dev/null; then
+        sudo iptables -I OUTPUT 1 -p tcp --dport 47657 -d "$HUNK_GW_IP" -j ACCEPT
+    fi
+else
+    if ! sudo iptables -C OUTPUT -p tcp --dport 47657 -j ACCEPT 2>/dev/null; then
+        sudo iptables -I OUTPUT 1 -p tcp --dport 47657 -j ACCEPT
+    fi
+fi
+
+touch "$CLAUDE_ENV_FILE"
+grep -qxF 'export HUNK_MCP_HOST=host.docker.internal' "$CLAUDE_ENV_FILE" 2>/dev/null ||
+    echo 'export HUNK_MCP_HOST=host.docker.internal' >> "$CLAUDE_ENV_FILE"
+grep -qxF 'export HUNK_MCP_UNSAFE_ALLOW_REMOTE=1' "$CLAUDE_ENV_FILE" 2>/dev/null ||
+    echo 'export HUNK_MCP_UNSAFE_ALLOW_REMOTE=1' >> "$CLAUDE_ENV_FILE"
+```
+
+Install it and make a physical copy of Hunk's generated review skill. Do not
+symlink the skill because the container cannot follow the host Homebrew path:
+
+```sh
+chmod +x ~/.claude/container-init.sh
+cp ~/.claude/container-init.sh ~/.claude/.container-init.sh
+mkdir -p ~/.claude/skills/hunk-review
+cp "$(hunk skill path)" ~/.claude/skills/hunk-review/SKILL.md
+chmod 644 ~/.claude/skills/hunk-review/SKILL.md
+```
+
+The `HUNK_MCP_UNSAFE_ALLOW_REMOTE` flag permits the container-side CLI to use
+the host-gateway address; the firewall exception remains limited to TCP port
+47657 and, when resolvable, the host gateway IP. After upgrading pre-1.0 Hunk,
+keep the container CLI and copied skill aligned:
+
+```sh
+# Run inside each existing container to refresh its CLI on next start.
+rm -f ~/.local/bin/hunk
+
+# Run on the host after upgrading Hunk.
+cp "$(hunk skill path)" ~/.claude/skills/hunk-review/SKILL.md
+```
+
+With Hunk open on the same repository, verify inside the container:
+
+```sh
+hunk session list
+hunk session comment list --repo . --type user --json
+```
 
 ## VS Code
 
@@ -434,7 +550,6 @@ Grant Accessibility/Input Monitoring permissions again when prompted.
 ## macOS preferences worth restoring
 
 - Dock position: right
-- Dock contents observed: Google Chrome, Notes, System Settings
 - Default browser: Google Chrome
 - Keyboard input source: U.S.; Gallium is provided by the physical keyboard/firmware setup rather than a macOS input source
 - Spotlight Command+Space shortcuts disabled so Raycast can own Command+Space
@@ -460,7 +575,7 @@ Observed versions, for reference only:
 - Apple Git 2.50.1
 - Fish 4.8.1
 
-The .NET SDK was not recorded as a Homebrew package, so install the current required SDK from Microsoft or the company's standard software source. Do not rely on the Apple system Python for project tooling; install a managed Python version if a project needs it.
+The .NET SDK was not recorded as a Homebrew package, so install the current required SDK from Microsoft. Do not rely on the Apple system Python for project tooling; install a managed Python version if a project needs it.
 
 ## Current application version snapshot
 
@@ -480,6 +595,7 @@ These versions are an audit trail, not pins:
 | Slack | 4.51.180 |
 | Spotify | 1.2.95.453 |
 | Visual Studio Code | 1.132.0 |
+| Zoom | 7.1.5 (84650) |
 
 ## Final verification checklist
 
@@ -490,7 +606,8 @@ These versions are an audit trail, not pins:
 - Ghostty passes Command+1…9 through to Herdr
 - `herdr config check` passes and Herdr starts at login
 - Prefix+L opens LazyGit
-- Prefix+D opens Hunk and watches the current repository diff
+- Prefix+C sends live Hunk comments to the selected workspace agent
+- A containerized agent can run `hunk session list` while the host Hunk TUI is open
 - Herdr pane-to-tab commands work
 - VS Code has the three .NET extensions
 - Rectangle and Scroll Reverser have their required Accessibility/Input Monitoring permissions
