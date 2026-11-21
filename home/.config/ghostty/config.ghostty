@@ -1,0 +1,31 @@
+# Ghostty. Herdr runs inside it and owns tabs, panes and workspaces.
+
+# Ioskeley Mono, the Term build (strict cell widths) with Nerd Font icons.
+# ./install.sh fonts installs it.
+font-family = "IoskeleyMonoTerm Nerd Font"
+font-size = 14
+
+theme = light:Catppuccin Latte,dark:Catppuccin Mocha
+
+# Option acts as Alt in the terminal, which Neovim and shells can use.
+macos-option-as-alt = true
+
+# Let Herdr have Command+1…9 for workspace switching.
+keybind = super+1=unbind
+keybind = super+digit_1=unbind
+keybind = super+2=unbind
+keybind = super+digit_2=unbind
+keybind = super+3=unbind
+keybind = super+digit_3=unbind
+keybind = super+4=unbind
+keybind = super+digit_4=unbind
+keybind = super+5=unbind
+keybind = super+digit_5=unbind
+keybind = super+6=unbind
+keybind = super+digit_6=unbind
+keybind = super+7=unbind
+keybind = super+digit_7=unbind
+keybind = super+8=unbind
+keybind = super+digit_8=unbind
+keybind = super+9=unbind
+keybind = super+digit_9=unbind

@@ -1,0 +1,117 @@
+onboarding = false
+
+[theme]
+name = "catppuccin"
+auto_switch = true
+dark_name = "catppuccin"
+light_name = "catppuccin-latte"
+
+[update]
+channel = "stable"
+version_check = true
+manifest_check = true
+
+[keys]
+prefix = "ctrl+h"
+focus_agent = "cmd+ctrl+1..9"
+new_tab = "prefix+t"
+previous_tab = ["prefix+p", "cmd+shift+["]
+next_tab = ["prefix+n", "cmd+shift+]"]
+switch_tab = "ctrl+1..9"
+switch_workspace = "cmd+1..9"
+focus_pane_left = "prefix+left"
+focus_pane_down = "prefix+down"
+focus_pane_up = "prefix+up"
+focus_pane_right = "prefix+right"
+
+[[keys.command]]
+key = "prefix+shift+a"
+type = "popup"
+command = """
+while true; do
+  printf 'Agent name: '
+  IFS= read -r name || exit 0
+  [ -n "$name" ] || exit 0
+
+  if output=$("$HERDR_BIN_PATH" agent rename "$HERDR_ACTIVE_PANE_ID" "$name" 2>&1); then
+    exit 0
+  fi
+
+  printf '\\n%s\\n\\n' "$output"
+done
+"""
+description = "rename focused agent"
+width = 44
+height = 7
+
+[[keys.command]]
+key = "prefix+l"
+type = "popup"
+command = "/opt/homebrew/bin/lazygit"
+description = "open lazygit"
+width = "95%"
+height = "95%"
+
+[[keys.command]]
+key = "prefix+c"
+type = "shell"
+command = "$HOME/.config/herdr/send-hunk-comments.sh"
+description = "send Hunk comments to an agent"
+
+[[keys.command]]
+key = "prefix+m"
+type = "shell"
+command = "\"$HERDR_BIN_PATH\" pane zoom \"$HERDR_ACTIVE_PANE_ID\" --off >/dev/null 2>&1; \"$HERDR_BIN_PATH\" pane move \"$HERDR_ACTIVE_PANE_ID\" --new-tab --focus"
+description = "move focused pane to a new tab"
+
+[[keys.command]]
+key = "prefix+shift+m"
+type = "popup"
+command = """
+set -eu
+
+herdr=${HERDR_BIN_PATH:?HERDR_BIN_PATH is required}
+source_pane=${HERDR_ACTIVE_PANE_ID:?HERDR_ACTIVE_PANE_ID is required}
+source_tab=${HERDR_ACTIVE_TAB_ID:?HERDR_ACTIVE_TAB_ID is required}
+source_workspace=${HERDR_ACTIVE_WORKSPACE_ID:?HERDR_ACTIVE_WORKSPACE_ID is required}
+snapshot=$("$herdr" api snapshot)
+
+target_tab=$(printf '%s\\n' "$snapshot" |
+  jq -r --arg source_tab "$source_tab" --arg source_workspace "$source_workspace" '
+    .result.snapshot as $session
+    | $session.tabs[]
+    | select(.workspace_id == $source_workspace and .tab_id != $source_tab)
+    | . as $tab
+    | [$tab.tab_id, ("tab " + ($tab.number | tostring)), $tab.label]
+    | @tsv
+  ' |
+  fzf --prompt='move pane to tab> ' --header='tab   label' --delimiter='\\t' --with-nth=2..
+) || exit 0
+
+target_tab=$(printf '%s\\n' "$target_tab" | cut -f1)
+[ -n "$target_tab" ] || exit 0
+
+target_pane=$(printf '%s\\n' "$snapshot" |
+  jq -r --arg target_tab "$target_tab" '
+    .result.snapshot.layouts[]
+    | select(.tab_id == $target_tab)
+    | .focused_pane_id
+  ')
+
+[ -n "$target_pane" ] || exit 1
+
+"$herdr" pane zoom "$source_pane" --off >/dev/null 2>&1 || true
+"$herdr" pane zoom "$target_pane" --off >/dev/null 2>&1 || true
+exec "$herdr" pane move "$source_pane" --tab "$target_tab" --target-pane "$target_pane" --split right --focus
+"""
+description = "move focused pane into another tab"
+width = "90%"
+height = "90%"
+
+[ui]
+prompt_new_tab_name = false
+agent_panel_sort = "priority"
+
+[experimental]
+kitty_graphics = true
+pane_history = false

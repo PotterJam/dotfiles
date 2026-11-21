@@ -1,0 +1,24 @@
+[core]
+	longpaths = true
+	editor = nvim
+[init]
+	defaultBranch = main
+[pull]
+	rebase = true
+[push]
+	autoSetupRemote = true
+[rerere]
+	enabled = true
+[alias]
+	plog = log --graph --decorate --pretty=oneline --abbrev-commit
+	dc = diff --cached
+	st = status -s
+	co = checkout
+	caa = commit -a --amend -C HEAD
+	r1 = reset HEAD^
+	sl = stash list
+	sp = stash pop
+	la = "!git config -l | grep alias | cut -c 7-"
+# Identity, signing and credentials live outside the repo.
+[include]
+	path = ~/.config/git/local

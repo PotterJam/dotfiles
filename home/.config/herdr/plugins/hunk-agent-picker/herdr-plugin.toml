@@ -1,0 +1,14 @@
+id = "local.hunk-agent-picker"
+name = "Hunk Agent Picker"
+version = "0.1.0"
+min_herdr_version = "0.8.0"
+description = "Choose which agent should address comments in a live Hunk review"
+platforms = ["macos", "linux"]
+
+[[panes]]
+id = "picker"
+title = "Send Hunk comments"
+placement = "popup"
+width = "90%"
+height = "90%"
+command = ["/bin/sh", "-lc", "exec \"$HERDR_PLUGIN_ROOT/picker.sh\""]
