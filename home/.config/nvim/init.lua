@@ -17,6 +17,18 @@ o.cursorline = true
 o.scrolloff = 8
 o.mouse = "a"
 o.clipboard = "unnamedplus"
+-- WSL: copy and paste through the Windows clipboard.
+if vim.fn.has("wsl") == 1 then
+  vim.g.clipboard = {
+    name = "WslClipboard",
+    copy = { ["+"] = "clip.exe", ["*"] = "clip.exe" },
+    paste = {
+      ["+"] = 'powershell.exe -NoLogo -NoProfile -c [Console]::Out.Write($(Get-Clipboard -Raw).ToString().Replace("`r", ""))',
+      ["*"] = 'powershell.exe -NoLogo -NoProfile -c [Console]::Out.Write($(Get-Clipboard -Raw).ToString().Replace("`r", ""))',
+    },
+    cache_enabled = 0,
+  }
+end
 o.ignorecase = true
 o.smartcase = true
 o.splitright = true

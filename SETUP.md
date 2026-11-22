@@ -29,21 +29,8 @@ Do not try to reproduce the exact OS or app versions below unless debugging a re
    eval "$(/opt/homebrew/bin/brew shellenv)"
    ```
 
-3. Clone this repo to `~/dotfiles` and run:
-
-   ```sh
-   ./install.sh brew    # everything in Brewfile, rustup, Herdr service
-   ./install.sh         # link configs, install Ioskeley Mono, AI tooling, Neovim plugins
-   ./install.sh macos   # Dock, Rectangle and Scroll Reverser preferences
-   ```
-
-4. Make Fish the login shell:
-
-   ```sh
-   grep -qxF /opt/homebrew/bin/fish /etc/shells || echo /opt/homebrew/bin/fish | sudo tee -a /etc/shells
-   chsh -s /opt/homebrew/bin/fish
-   ```
-
+3. Clone this repo to `~/dotfiles` and run `./install.sh`. It installs the Brewfile, links configs, installs Ioskeley Mono, sets up AI tooling and Neovim, and makes Fish the login shell.
+4. Open Rectangle and Scroll Reverser once, quit them, then run `./install.sh macos` for the Dock, Rectangle and Scroll Reverser preferences.
 5. Put Git identity and signing in `~/.config/git/local`, and machine-only Fish settings or secrets in `~/.config/fish/local.fish`. Neither is in the repo.
 6. Fully quit and reopen Ghostty. Sign in to apps and restore SSH keys from 1Password.
 
@@ -66,7 +53,7 @@ Everything under `home/` is linked into `$HOME` at the same path by `./install.s
 
 ## Herdr
 
-Herdr runs as a Homebrew service. After editing its config:
+Running `herdr` starts its background server if it isn't already running (Homebrew's formula has no `brew services` entry). After editing its config:
 
 ```sh
 herdr config check
@@ -219,7 +206,7 @@ These versions are an audit trail, not pins:
 - Chrome is the default browser
 - Raycast opens with Command+Space
 - Ghostty passes Command+1…9 through to Herdr
-- `herdr config check` passes and Herdr starts at login
+- `herdr config check` passes and `herdr status` shows the server running
 - Prefix+L opens LazyGit
 - Prefix+C sends live Hunk comments to the selected workspace agent
 - A containerized agent can run `hunk session list` while the host Hunk TUI is open

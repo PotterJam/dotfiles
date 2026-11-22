@@ -1,4 +1,6 @@
 # brew bundle --file ./Brewfile   (./install.sh brew runs this)
+# Works on macOS and on Linux, including WSL on Windows. Mac-only apps are in
+# the `if OS.mac?` block; on Linux, install.sh gets Claude Code and Codex from npm.
 
 tap "hashicorp/tap"
 
@@ -25,23 +27,26 @@ brew "uv"
 brew "elixir"
 brew "hashicorp/tap/terraform"
 brew "podman"
+brew "dotnet" unless OS.mac?
 
-# AI
-cask "claude"
-cask "claude-code"
-cask "codex"
+if OS.mac?
+  # AI
+  cask "claude"
+  cask "claude-code"
+  cask "codex"
 
-# Apps
-cask "1password"
-cask "dotnet-sdk"
-cask "ghostty"
-cask "google-chrome"
-cask "notion"
-cask "notion-calendar"
-cask "raycast"
-cask "rectangle"
-cask "scroll-reverser"
-cask "slack"
-cask "spotify"
-cask "visual-studio-code"
-cask "zoom"
+  # Apps
+  cask "1password"
+  cask "dotnet-sdk"
+  cask "ghostty"
+  cask "google-chrome"
+  cask "notion"
+  cask "notion-calendar"
+  cask "raycast"
+  cask "rectangle"
+  cask "scroll-reverser"
+  cask "slack"
+  cask "spotify"
+  cask "visual-studio-code"
+  cask "zoom"
+end
