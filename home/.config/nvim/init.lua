@@ -39,7 +39,9 @@ o.timeoutlen = 400
 o.expandtab = true
 o.shiftwidth = 4
 o.tabstop = 4
-o.wrap = false
+o.wrap = true
+o.linebreak = true -- wrap at word boundaries, not mid-word
+o.breakindent = true -- wrapped lines keep their indent
 o.list = true
 o.listchars = { tab = "» ", trail = "·", nbsp = "␣" }
 o.confirm = true
