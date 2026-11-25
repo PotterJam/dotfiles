@@ -5,7 +5,7 @@
 font-family = "IoskeleyMonoTerm Nerd Font"
 font-size = 14
 
-theme = light:Catppuccin Latte,dark:Catppuccin Mocha
+theme = Catppuccin Mocha
 
 # Option acts as Alt in the terminal, which Neovim and shells can use.
 macos-option-as-alt = true
