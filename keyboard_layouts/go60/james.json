@@ -611,14 +611,6 @@
         "value": "&kp",
         "params": [
           {
-            "value": "SEMI"
-          }
-        ]
-      },
-      {
-        "value": "&kp",
-        "params": [
-          {
             "value": "LS",
             "params": [
               {
@@ -632,9 +624,17 @@
         "value": "&kp",
         "params": [
           {
-            "value": "GRAVE"
+            "value": "LS",
+            "params": [
+              {
+                "value": "N8"
+              }
+            ]
           }
         ]
+      },
+      {
+        "value": "&none"
       },
       {
         "value": "&kp",
@@ -674,7 +674,12 @@
         "value": "&kp",
         "params": [
           {
-            "value": "BSLH"
+            "value": "LS",
+            "params": [
+              {
+                "value": "N2"
+              }
+            ]
           }
         ]
       },
@@ -685,12 +690,7 @@
         "value": "&kp",
         "params": [
           {
-            "value": "LS",
-            "params": [
-              {
-                "value": "N3"
-              }
-            ]
+            "value": "SEMI"
           }
         ]
       },
@@ -750,7 +750,12 @@
         ]
       },
       {
-        "value": "&none"
+        "value": "&kp",
+        "params": [
+          {
+            "value": "BSLH"
+          }
+        ]
       },
       {
         "value": "&kp",
@@ -840,12 +845,7 @@
         "value": "&kp",
         "params": [
           {
-            "value": "LS",
-            "params": [
-              {
-                "value": "N8"
-              }
-            ]
+            "value": "GRAVE"
           }
         ]
       },
@@ -869,7 +869,7 @@
             "value": "LS",
             "params": [
               {
-                "value": "EQUAL"
+                "value": "N3"
               }
             ]
           }
@@ -879,7 +879,12 @@
         "value": "&none"
       },
       {
-        "value": "&none"
+        "value": "&kp",
+        "params": [
+          {
+            "value": "TAB"
+          }
+        ]
       },
       {
         "value": "&kp",
@@ -949,7 +954,7 @@
             "value": "LS",
             "params": [
               {
-                "value": "N2"
+                "value": "EQUAL"
               }
             ]
           }
